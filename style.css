@@ -1,0 +1,95 @@
+/* style.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif; /* Fonte padrão, você pode escolher outra mais romântica */
+    background-color: #fce4ec; /* Um rosa bem clarinho para o tema */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Garante que o corpo ocupe pelo menos toda a altura da tela */
+    overflow: hidden; /* Esconde as mensagens que "explodem" para fora da tela, evitando barras de rolagem */
+    color: #c2185b; /* Cor principal para o texto, caso haja algum fora das mensagens */
+}
+
+#container-principal {
+    text-align: center; /* Centraliza o conteúdo do botão, se ele fosse um link */
+    position: relative; /* Muito importante! As mensagens ".mensagem-amor" com "position: absolute" 
+                           serão posicionadas em relação a este contêiner. */
+}
+
+#botaoAmor {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    color: white;
+    background-color: #e91e63; /* Rosa vibrante, cor principal do botão */
+    border: none; /* Remove a borda padrão do botão */
+    border-radius: 30px; /* Bordas arredondadas para um visual suave */
+    cursor: pointer; /* Muda o cursor para uma mãozinha ao passar sobre o botão */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra sutil para dar profundidade */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Transições suaves para hover e active */
+}
+
+#botaoAmor:hover {
+    background-color: #c2185b; /* Cor do botão fica mais escura ao passar o mouse */
+    transform: scale(1.05); /* Botão aumenta um pouco ao passar o mouse */
+}
+
+#botaoAmor:active {
+    transform: scale(0.95); /* Botão diminui um pouco ao ser clicado */
+}
+
+.mensagem-amor {
+    position: absolute; /* Essencial! Permite que cada mensagem seja posicionada livremente 
+                           dentro do seu contêiner pai que tenha "position: relative" (no caso, #container-principal). */
+    left: 50%; /* Posição inicial horizontal: centro do #container-principal. */
+    top: 50%;  /* Posição inicial vertical: centro do #container-principal. */
+    
+    /* O transform abaixo ajusta a posição para que o *centro* da mensagem 
+       fique no ponto (50%, 50%), e não o canto superior esquerdo. */
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg); 
+    
+    white-space: nowrap; /* Garante que "Eu te amo" fique sempre em uma única linha. */
+    font-size: 1.5em; /* Tamanho da fonte das mensagens. Pode ser ajustado. */
+    font-weight: bold; /* Texto em negrito. */
+    color: #e91e63; /* Cor do texto das mensagens. */
+    opacity: 1; /* Começa totalmente visível. A animação cuidará do fade out. */
+    pointer-events: none; /* As mensagens não serão clicáveis e não interferirão com outros cliques. */
+    
+    /* Dica para o navegador: otimizar a renderização dessas propriedades durante a animação. */
+    will-change: transform, opacity; 
+
+    /* A animação será aplicada aqui via JavaScript */
+    /* Exemplo: animation: animacaoExplosao 2s cubic-bezier(0.175, 0.885, 0.320, 1.275) forwards; */
+}
+
+/* Animação de explosão */
+@keyframes animacaoExplosao {
+    0% {
+        /* Estado inicial da animação:
+           - Começa no centro (já definido pela posição inicial e transform na classe .mensagem-amor).
+           - Escala de 0.5 (metade do tamanho) para um efeito de "crescimento".
+           - Rotação de 0 graus.
+           - Totalmente opaca. */
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+    70% {
+        /* Durante a maior parte da animação (até 70%), a mensagem permanece totalmente opaca.
+           Isso garante que ela seja bem visível antes de começar a desaparecer. */
+        opacity: 1; 
+    }
+    100% {
+        /* Estado final da animação:
+           - A mensagem se move para uma posição final, escala e rotação aleatórias.
+             Esses valores são fornecidos pelo JavaScript através de variáveis CSS.
+           - O "calc(-50% + var(...))" é usado porque o "transform: translate(-50%, -50%)"
+             original da classe .mensagem-amor precisa ser considerado para que o deslocamento
+             (var(--final-x), var(--final-y)) seja a partir do centro do elemento.
+           - Totalmente transparente (invisível). */
+        transform: translate(calc(-50% + var(--final-x, 0px)), calc(-50% + var(--final-y, 0px)))
+                   scale(var(--final-escala, 1)) 
+                   rotate(var(--final-rotacao, 0deg));
+        opacity: 0;
+    }
+}
